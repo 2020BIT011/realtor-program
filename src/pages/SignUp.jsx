@@ -3,6 +3,17 @@ import{useState} from "react";
 import {AiFillEyeInvisible,AiFillEye} from "react-icons/ai"
 import { Link } from "react-router-dom";
 import OAuth from '../components/OAuth';
+import{
+  getAuth,
+  createUserWithEmailAndPassword,
+  updateProfile,
+}from "firebase/auth";
+import {db} from "../firebase";
+import {doc, serverTimestamp, setDoc} from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
+import {toast} from 'react-toastify';
+
+
 export default function SignUp() {
   const[showPassword,setShowPassword]=useState(false);
 
@@ -15,7 +26,7 @@ export default function SignUp() {
     password:"",
   });
   const{name,email,password}=formData;
-
+  const navigate = useNavigate();
 
   function onChange(e){
     setFormData((prevState)=>({
@@ -23,6 +34,39 @@ export default function SignUp() {
       [e.target.id]:e.target.value,
     }));
   }
+ async function onSubmit(e){
+    e.preventDefault();
+
+    try{
+      const auth = getAuth();
+      const userCredential= await
+      createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+      );
+
+      updateProfile(auth.currentUser,{
+        displayName:name,
+      });
+      
+      const user =userCredential.user;
+      const formDataCopy = {...formData};
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+      
+      await setDoc(doc(db,"users",user.uid),formDataCopy);
+      toast.success("Account Created Successfully");
+      navigate("/");
+      }
+      catch(error){
+        toast.error("Something went wrong with the Registration");
+      }
+      
+   
+  }
+
+
 
   return (
     <section>
@@ -35,7 +79,7 @@ export default function SignUp() {
           <img className='w-full rounded-2xl' src="https://media.istockphoto.com/id/1426988809/photo/security-password-login-online-concept-hands-typing-and-entering-username-and-password-of.jpg?b=1&s=170667a&w=0&k=20&c=AJD5Wv30lmyILccJyMpQGhkmh0VhZ5WNDtk53MO1OVM=" alt="sign-in" />
         
         </div>
-      <form  className='w-full md:w-[67%] lg:w-[40%] lg:ml:20'>
+      <form onSubmit={onSubmit} >
         <input className='w-full' 
         type="text"
          id='name'
