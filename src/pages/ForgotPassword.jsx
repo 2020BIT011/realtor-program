@@ -1,12 +1,28 @@
 import React from 'react';
 import{useState} from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import OAuth from '../components/OAuth';
+import { toast } from 'react-toastify';
+import { getAuth, sendPasswordResetEmail,auth } from 'firebase/auth';
+
+
+
 export default function ForgotPassword() {
-
   const[email,setEmail]= useState("");
-  
 
+const navigate=useNavigate();
+  async function onSubmit(e) {
+    e.preventDefault();
+  try {
+    const auth=getAuth();
+    await sendPasswordResetEmail(auth,email)
+    toast.success("Email was sent Successfully")
+    navigate("/");
+  } catch (error) {
+    toast.error("Could Not send Reset Password Email is Not Valid");
+    
+  }    
+  }
 
   function onChange(e){
    setEmail(e.target.value);
@@ -23,7 +39,8 @@ export default function ForgotPassword() {
           <img className='w-full rounded-2xl' src="https://media.istockphoto.com/id/1426988809/photo/security-password-login-online-concept-hands-typing-and-entering-username-and-password-of.jpg?b=1&s=170667a&w=0&k=20&c=AJD5Wv30lmyILccJyMpQGhkmh0VhZ5WNDtk53MO1OVM=" alt="sign-in" />
         
         </div>
-      <form  className='w-full md:w-[67%] lg:w-[40%] lg:ml:20'>
+      <form onSubmit={onSubmit}
+       className='w-full md:w-[67%] lg:w-[40%] lg:ml:20'>
         <input className='w-full' 
         type="email"
          id='email'
