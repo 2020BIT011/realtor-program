@@ -1,20 +1,23 @@
 import React from 'react';
 import{useState} from "react";
 import {AiFillEyeInvisible,AiFillEye} from "react-icons/ai"
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useNavigation } from "react-router-dom";
 import OAuth from '../components/OAuth';
-export default function SignIn() {
+// import { signInWithEmailAndPassword, getAuth ,auth} from 'firebase/auth';
+import { signInWithEmailAndPassword  } from 'firebase/auth';
+import { toast } from 'react-toastify';
+import { getAuth } from 'firebase/auth';
+import { auth } from 'firebase/auth';
+
+export default function SignIn() { 
   const[showPassword,setShowPassword]=useState(false);
-
-
-
-
   const[formData,setFormData]= useState({
     email:"",
     password:"",
   });
   const{email,password}=formData;
 
+  const navigate=useNavigate()
 
   function onChange(e){
     setFormData((prevState)=>({
@@ -22,6 +25,26 @@ export default function SignIn() {
       [e.target.id]:e.target.value,
     }));
   }
+
+async function onSubmit(e){
+    e.preventDefault()
+try{
+  const auth = getAuth()
+  const userCredential = await
+  signInWithEmailAndPassword(auth,email,password)
+  if(userCredential.user){
+    navigate("/");
+  }
+
+
+}
+catch(error){
+  toast.error("Invalid User Credentials");
+
+}
+
+}
+
 
   return (
     <section>
@@ -34,7 +57,7 @@ export default function SignIn() {
           <img className='w-full rounded-2xl' src="https://media.istockphoto.com/id/1426988809/photo/security-password-login-online-concept-hands-typing-and-entering-username-and-password-of.jpg?b=1&s=170667a&w=0&k=20&c=AJD5Wv30lmyILccJyMpQGhkmh0VhZ5WNDtk53MO1OVM=" alt="sign-in" />
         
         </div>
-      <form  className='w-full md:w-[67%] lg:w-[40%] lg:ml:20'>
+      <form onSubmit={onSubmit}  className='w-full md:w-[67%] lg:w-[40%] lg:ml:20'>
         <input className='w-full' 
         type="email"
          id='email'
