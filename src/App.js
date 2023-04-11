@@ -47,7 +47,7 @@ function App() {
 </Routes>
 
 
-
+{/* 
 </Router>
 
 <ToastContainer
@@ -57,7 +57,7 @@ function App() {
         newestOnTop={false}
         closeOnClick
         rtl={false}
-        pauseOnFocusLoss
+        pauseOnFocusLoss */}
         draggable
         pauseOnHover
         theme="dark"
