@@ -128,7 +128,7 @@ export default function Home() {
             </ul>
           </div>
         )}
-        {rentListings && rentListings.length > 0 && (
+        {rentListings && rentListings.length> 0 && (
           <div className="m-2 mb-6">
             <h2 className="px-3 text-2xl mt-6 font-semibold">Places for rent</h2>
             <Link to="/category/rent">
@@ -170,3 +170,4 @@ export default function Home() {
     </div>
   );
 }
+
